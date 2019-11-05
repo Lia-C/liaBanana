@@ -21,7 +21,7 @@ void ofApp::update(){
     float mass = 0.1; // mass of ball
     float rubberLen = 200.0; // segment length
     float k = 0.5; // segment's stiffness
-    ofPoint g(0.0, 9.8);  // gravity
+    ofPoint g(0.0, 20);  // gravity
     
     ofPoint delta = pos - pos0;
     float len = delta.length();
@@ -32,6 +32,7 @@ void ofApp::update(){
     ofPoint force = hookeForce + g;
     ofPoint a = force / mass;
     velocity += a * dt;
+    velocity *= 0.999;
     pos += velocity * dt;
 
 }

@@ -1,26 +1,19 @@
 #include "ofApp.h"
 
-//--------------------------------------------------------------
-void ofApp::setup(){
-    lia.load("liabanana.jpg");
-    ofSetBackgroundAuto(false);
-    
-    
-    ofSetFrameRate(60);
-    
-    // Set initial values
-    pos0 = ofPoint(512, 300);
-    pos = ofPoint(600, 200);
-    velocity = ofPoint(100, 0);
+void Pendulum::setup(ofPoint pos0, ofPoint pos, ofPoint velocity, ofColor color){
+    this->pos0 = pos0;
+    this->pos = pos;
+    this->velocity = velocity;
+    this->color = color;
 }
 
-//--------------------------------------------------------------
-void ofApp::update(){
+
+void Pendulum::update(){
     float dt = 1.0 / 60.0; // time step
     float mass = 0.1; // mass of ball
-    float rubberLen = 200.0; // segment length
+    float rubberLen = 0.0; // segment length
     float k = 0.5; // segment's stiffness
-    ofPoint g(0.0, 9.8);  // gravity
+    ofPoint g(0.0, 0.0);  // gravity
 
     ofPoint delta = pos - pos0;
     float len = delta.length();
@@ -30,52 +23,80 @@ void ofApp::update(){
 
     ofPoint force = hookeForce + g;
     ofPoint a = force / mass;
-    velocity += a * dt;
-    pos += velocity * dt;
+    this->velocity += a * dt;
+    this->velocity *= 0.99;
+    this->pos += this->velocity * dt;
+    
+    
+}
 
+void Pendulum::draw(){
+    ofSetColor(this->color);
+    ofDrawCircle(this->pos.x, this->pos.y, 5);
+}
+
+
+//--------------------------------------------------------------
+void ofApp::setup(){
+    lia.load("liabanana.jpg");
+    ofSetBackgroundAuto(false);
+    ofBackground(0);
+    float width = lia.getWidth();
+    float height = lia.getHeight();
+    lia.draw(0, 0, width, height);
+    
+    
+    ofSetFrameRate(60);
+
+    int step = 10;
+
+    for (int x = 0; x < width; x += step) {
+        for (int y = 0; y < height; y += step) {
+                        
+//            if (x % (step*13) == 0 && y % (step*12) == 0){
+                
+                Pendulum pendy;
+                
+                ofPoint pos0 = ofPoint(x,y);
+                ofPoint pos = ofPoint(x + ofRandom(-20, 20),y + ofRandom(-20, 20)) ;
+                ofPoint velocity = ofPoint(100, 0);
+                ofColor color = lia.getColor(x, y);
+                
+                cout << pos0 << endl;
+                cout << pos << endl;
+                cout << "    " << endl;
+                
+                
+                pendy.setup(pos0, pos, velocity, color);
+                pendys.push_back(pendy);
+                
+//                float growRate = sin(ofGetElapsedTimef());
+//                for (int circle = 0; circle < 5; circle ++) {
+//                    ofColor c = lia.getColor(x, y);
+                
+//                    c.setBrightness(100 * circle);
+//                    ofSetColor(c);
+//                    ofDrawCircle(x, y, (100-20*circle) * growRate);
+//
+//                    ofDrawCircle(pos.x, pos.y, 20);
+//                }
+            }
+    }
+}
+
+//--------------------------------------------------------------
+void ofApp::update(){
+    for(int i = 0; i < pendys.size(); i++){
+        pendys[i].update();
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    
-    float width = lia.getWidth();
-    float height = lia.getHeight();
-    int step = 10;
-    ofBackground(255);
-    lia.draw(0, 0, width, height);
-    
 
-    
-    for (int x = 0; x < width; x += step) {
-        for (int y = 0; y < height; y += step) {
-            
-           
-            
-            if (x % (step*13) == 0 && y % (step*12) == 0)
-            {
-//                ofColor c = lia.getColor(x, y);
-//                ofSetColor(c);
-                float growRate = sin(ofGetElapsedTimef());
-                for (int circle = 0; circle < 5; circle ++) {
-                    ofColor c = lia.getColor(x, y);
-                    c.setBrightness(100 * circle);
-                    ofSetColor(c);
-                    ofDrawCircle(x, y, (100-20*circle) * growRate);
-                    
-                    ofDrawCircle(pos.x, pos.y, 20);
-                }
-                
-            }
-            
-            
-            
-    
-    
-        }
+    for(int i = 0; i < pendys.size(); i++){
+        pendys[i].draw();
     }
-    
-    
-
 }
 
 //--------------------------------------------------------------

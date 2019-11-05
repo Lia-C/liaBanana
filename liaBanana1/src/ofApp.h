@@ -2,6 +2,18 @@
 
 #include "ofMain.h"
 
+class Pendulum {
+    public:
+        ofPoint pos0;
+        ofPoint pos;
+        ofPoint velocity;
+        ofColor color;
+    
+    void setup(ofPoint pos0, ofPoint pos, ofPoint velocity, ofColor color);
+    void update();
+    void draw();
+};
+
 class ofApp : public ofBaseApp{
 
 	public:
@@ -23,8 +35,6 @@ class ofApp : public ofBaseApp{
     
     ofImage lia;
     
-    ofPoint pos0;
-    ofPoint pos;
-    ofPoint velocity;
+    vector<Pendulum> pendys;
 		
 };
